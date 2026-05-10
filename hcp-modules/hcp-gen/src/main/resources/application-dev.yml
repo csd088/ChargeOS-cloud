@@ -1,0 +1,29 @@
+# 数据源配置
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/hcp_cloud_dev?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&useSSL=false
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Redis 配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 10000ms
+
+  cloud:
+    sentinel:
+      enabled: false
+
+# MyBatis Plus 配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.hcp.gen.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 日志配置
+logging:
+  level:
+    com.hcp.gen.mapper: debug

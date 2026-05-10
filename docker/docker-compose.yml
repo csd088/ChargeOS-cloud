@@ -13,6 +13,7 @@ services:
       context: ./nacos
     environment:
       - MODE=standalone
+      - NACOS_AUTH_ENABLE=false
     volumes:
       - ./nacos/logs/:/home/nacos/logs
       - ./nacos/conf/application.properties:/home/nacos/conf/application.properties

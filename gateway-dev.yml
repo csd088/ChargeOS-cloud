@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: hcp-auth
+          uri: lb://hcp-auth
+          predicates:
+            - Path=/dev-api/auth/**
+          filters:
+            - RewritePath=/dev-api/auth(?<segment>/?.*),$\{segment}
+        - id: hcp-system
+          uri: lb://hcp-system
+          predicates:
+            - Path=/dev-api/system/**
+          filters:
+            - StripPrefix=1
+        - id: hcp-gen
+          uri: lb://hcp-gen
+          predicates:
+            - Path=/dev-api/gen/**
+          filters:
+            - StripPrefix=1
+        - id: hcp-file
+          uri: lb://hcp-file
+          predicates:
+            - Path=/dev-api/file/**
+          filters:
+            - StripPrefix=1
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true

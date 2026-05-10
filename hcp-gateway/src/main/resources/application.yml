@@ -1,0 +1,42 @@
+server:
+  port: 1026
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: hcp-auth
+          uri: http://127.0.0.1:39200
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+        - id: hcp-system
+          uri: http://127.0.0.1:39201
+          predicates:
+            - Path=/system/**
+          filters:
+            - StripPrefix=1
+        - id: hcp-operator
+          uri: http://127.0.0.1:39206
+          predicates:
+            - Path=/operator/**
+          filters:
+            - StripPrefix=1
+        - id: hcp-gen
+          uri: http://127.0.0.1:39202
+          predicates:
+            - Path=/code/**
+          filters:
+            - StripPrefix=1
+      discovery:
+        locator:
+          enabled: false
+    sentinel:
+      enabled: false
+
+security:
+  ignore:
+    whites:
+      - /auth/login
+      - /auth/register

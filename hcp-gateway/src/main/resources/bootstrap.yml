@@ -32,20 +32,5 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - gateway-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
         namespace: hcp
-
-    sentinel:
-      # 取消控制台懒加载
-      eager: true
-      transport:
-        # 控制台地址
-        dashboard: ${SENTINEL_HOST:127.0.0.1}:${SENTINEL_PORT:8718}
-      # nacos配置持久化
-      datasource:
-        ds1:
-          nacos:
-            server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
-            dataId: sentinel-vctgo-gateway
-            groupId: DEFAULT_GROUP
-            data-type: json
-            rule-type: gw-flow
