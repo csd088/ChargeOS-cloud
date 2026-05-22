@@ -30,3 +30,6 @@ spring:
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
         namespace: hcp
+    loadbalancer:
+      nacos:
+        enabled: true

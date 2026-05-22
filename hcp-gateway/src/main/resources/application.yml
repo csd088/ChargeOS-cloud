@@ -6,34 +6,37 @@ spring:
     gateway:
       routes:
         - id: hcp-auth
-          uri: http://127.0.0.1:39200
+          uri: lb://hcp-auth
           predicates:
             - Path=/auth/**
           filters:
             - StripPrefix=1
         - id: hcp-system
-          uri: http://127.0.0.1:39201
+          uri: lb://hcp-system
           predicates:
             - Path=/system/**
           filters:
             - StripPrefix=1
         - id: hcp-operator
-          uri: http://127.0.0.1:39206
+          uri: lb://hcp-operator
           predicates:
             - Path=/operator/**
           filters:
             - StripPrefix=1
         - id: hcp-gen
-          uri: http://127.0.0.1:39202
+          uri: lb://hcp-gen
           predicates:
             - Path=/code/**
           filters:
             - StripPrefix=1
       discovery:
         locator:
-          enabled: false
+          enabled: true
     sentinel:
       enabled: false
+    loadbalancer:
+      nacos:
+        enabled: true
 
 security:
   ignore:

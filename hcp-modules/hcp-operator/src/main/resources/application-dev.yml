@@ -23,6 +23,13 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
 
+# 多租户配置
+hcp:
+  tenant:
+    column: tenant_id
+    ignore-tables:
+      - c_city
+
 # 日志配置
 logging:
   level:

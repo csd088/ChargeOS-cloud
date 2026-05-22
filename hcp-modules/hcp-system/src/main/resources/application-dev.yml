@@ -21,7 +21,7 @@ spring:
       primary: master
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/hcp_cloud_dev?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&useSSL=false
+          url: jdbc:mysql://127.0.0.1:3307/hcp_cloud_dev?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true
           username: root
           password: password
           driver-class-name: com.mysql.cj.jdbc.Driver

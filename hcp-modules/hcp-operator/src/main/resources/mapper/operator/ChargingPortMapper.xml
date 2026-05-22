@@ -32,7 +32,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectChargingPortList"   resultType="com.hcp.system.api.domain.ChargingPort">
         SELECT
-        t1.*,
+        t1.port_id,
+        t1.user_id,
+        t1.state,
+        t1.power,
+        t1.name,
+        t1.pile_id,
+        t1.device_id,
+        t1.create_time,
+        t1.gun_insert,
+        t1.gun_status,
+        t1.can_use,
+        t1.fault_code,
+        t1.fault_reason,
+        t1.fault_time,
+        t1.qr_code,
+        t1.is_hlht,
+        t1.hlht_id,
+        t1.tenant_id,
         t2.pile_type,
         t2.running_status,
         o.charging_current,
@@ -45,9 +62,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LEFT JOIN c_charging_pile t2 ON t2.pile_id = t1.pile_id
         LEFT JOIN (
         SELECT
-        *
+        port_id,
+        charging_current,
+        charging_cdgl,
+        consume_power,
+        real_hour
         FROM
-        ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY port_id ORDER BY create_time DESC ) AS rn FROM c_charging_order WHERE charge_status = 9002 ) AS filtered_orders
+        ( SELECT port_id, charging_current, charging_cdgl, consume_power, real_hour, ROW_NUMBER() OVER ( PARTITION BY port_id ORDER BY create_time DESC ) AS rn FROM c_charging_order WHERE charge_status = 9002 ) AS filtered_orders
         WHERE
         rn = 1 ) o ON t1.port_id = o.port_id
         <where>
@@ -57,7 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="query.gunInsert != null  and query.gunInsert != ''"> and t1.gun_insert = #{query.gunInsert}</if>
             <if test="query.gunStatus != null "> and t1.gun_status = #{query.gunStatus}</if>
         </where>
-        GROUP BY t1.port_id
+        GROUP BY t1.port_id, t2.pile_type, t2.running_status, o.charging_current, o.charging_cdgl, o.consume_power, o.real_hour
         ORDER BY t1.create_time DESC
     </select>
     <select id="selectPort" resultType="com.hcp.system.api.domain.ChargingPort">

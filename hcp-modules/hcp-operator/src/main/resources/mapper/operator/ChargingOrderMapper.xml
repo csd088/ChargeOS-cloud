@@ -66,21 +66,57 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectChargingOrderListPage"   resultMap="ChargingOrderResult">
         SELECT
+        t1.order_id,
+        t1.user_Id,
+        t1.order_state,
+        t1.pile_id,
+        t1.port_id,
+        t1.start_time,
+        t1.end_time,
+        t1.order_number,
+        t1.charge_status,
+        t1.is_fee,
+        t1.consume_power,
+        t1.charging_current,
+        t1.charging_cdgl,
+        t1.custom_price_id,
+        t1.hour,
+        t1.price,
+        t1.mobile,
+        t1.create_time,
+        t1.code,
+        t1.card_no,
+        t1.ordergold,
+        t1.order_type,
+        t1.out_trade_no,
+        t1.real_hour,
+        t1.real_end_time,
+        t1.refund_amount,
+        t1.device_type,
+        t1.charge_fee,
+        t1.service_fee,
+        t1.pay_time,
+        t1.order_source,
+        t1.is_group_order,
+        t1.group_card_no,
+        t1.invoice_id,
+        t1.invoice_no,
+        t1.stop_reason,
+        t1.tenant_id,
         t3.station_name AS stationName,
-        t4.name as portName,
+        t4.name AS portName,
         CASE
         WHEN t1.order_state in ('6') and UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t1.real_end_time) > 1800 THEN '8084'
         WHEN t1.order_state in ('2','3','5','7') THEN '8082'
         WHEN t1.order_state in ('4') THEN '8083'
         WHEN t1.order_state in ('1') THEN '8081'
         ELSE '8085' END chargingOrderType,
-        IF(t1.card_no is NULL,'在线支付','卡支付') payType,
-        t1.*
+        IF(t1.card_no is NULL,'在线支付','卡支付') payType
         FROM
         c_charging_order t1
         LEFT JOIN c_charging_pile t2 on t2.pile_id = t1.pile_id
         LEFT JOIN c_charging_station t3 on t3.station_id = t2.station_id
-        LEFT JOIN c_charging_port t4 on t4.pile_id = t2.pile_id
+        LEFT JOIN c_charging_port t4 on t4.port_id = t1.port_id
         <where>
             <if test="query.userId != null "> and t1.user_Id = #{query.userId}</if>
             <if test="query.ordernumber != null  and query.ordernumber != ''"> and t1.ordernumber = #{query.ordernumber}</if>
@@ -110,7 +146,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and date_format(t1.create_time,'%Y-%m-%d') BETWEEN #{query.startTime} AND #{query.endTime}
             </if>
         </where>
-        GROUP BY t1.order_id ORDER BY t1.create_time desc
+        GROUP BY
+        t1.order_id,
+        t3.station_name,
+        t4.name,
+        t1.order_state,
+        t1.real_end_time,
+        t1.card_no,
+        t1.user_Id,
+        t1.order_number,
+        t1.pile_id,
+        t1.mobile,
+        t1.create_time,
+        t1.start_time,
+        t1.end_time,
+        t1.charge_status,
+        t1.is_fee,
+        t1.consume_power,
+        t1.charging_current,
+        t1.charging_cdgl,
+        t1.custom_price_id,
+        t1.hour,
+        t1.price,
+        t1.code,
+        t1.ordergold,
+        t1.order_type,
+        t1.out_trade_no,
+        t1.real_hour,
+        t1.refund_amount,
+        t1.device_type,
+        t1.charge_fee,
+        t1.service_fee,
+        t1.pay_time,
+        t1.order_source,
+        t1.is_group_order,
+        t1.group_card_no,
+        t1.invoice_id,
+        t1.invoice_no,
+        t1.stop_reason,
+        t1.tenant_id
+        ORDER BY t1.create_time desc
     </select>
 
     <delete id="deleteChargingOrderByOrderIds" parameterType="String">
