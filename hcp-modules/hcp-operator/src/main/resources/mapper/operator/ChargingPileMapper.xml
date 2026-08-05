@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
         a.pile_id chargeNo,
         a.station_id plotId,
-        plots.station_name plotName,
+        ANY_VALUE(plots.station_name) plotName,
         a.name chargeName,
         a.user_id userId,
         a.running_status runningStatus,
