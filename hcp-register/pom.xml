@@ -102,6 +102,11 @@
 					<exclude>**/*.woff2</exclude>
 					<exclude>**/*.ttf</exclude>
 					<exclude>**/*.eot</exclude>
+					<exclude>**/*.svg</exclude>
+					<exclude>**/*.png</exclude>
+					<exclude>**/*.ico</exclude>
+					<exclude>**/*.jpg</exclude>
+					<exclude>**/*.gif</exclude>
 				</excludes>
 			</resource>
 			<resource>
@@ -112,6 +117,11 @@
 					<include>**/*.woff2</include>
 					<include>**/*.ttf</include>
 					<include>**/*.eot</include>
+					<include>**/*.svg</include>
+					<include>**/*.png</include>
+					<include>**/*.ico</include>
+					<include>**/*.jpg</include>
+					<include>**/*.gif</include>
 				</includes>
 			</resource>
 		</resources>
