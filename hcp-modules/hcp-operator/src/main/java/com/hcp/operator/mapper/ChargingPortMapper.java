@@ -60,4 +60,29 @@ public interface ChargingPortMapper extends BaseMapperX<ChargingPort>
     int updateByPrimaryKeySelective(ChargingPort record);
     @InterceptorIgnore(tenantLine = "1")
     int updateByPrimaryKey(ChargingPort record);
+
+    /**
+     * 批量新增充电桩端口
+     *
+     * @param list 端口集合
+     * @return 结果
+     */
+    @InterceptorIgnore(tenantLine = "1")
+    int insertBatchPorts(@Param("list") List<ChargingPort> list);
+
+    /**
+     * 按桩编号批量删除端口（删桩级联用）
+     *
+     * @param pileIds 桩编号集合
+     * @return 结果
+     */
+    int deleteByPileIds(@Param("pileIds") String[] pileIds);
+
+    /**
+     * 按桩编号删除端口（删桩级联用）
+     *
+     * @param pileId 桩编号
+     * @return 结果
+     */
+    int deleteByPileId(@Param("pileId") String pileId);
 }

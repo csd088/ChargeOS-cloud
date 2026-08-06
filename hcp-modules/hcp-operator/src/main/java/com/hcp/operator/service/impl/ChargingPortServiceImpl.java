@@ -1,8 +1,16 @@
 package com.hcp.operator.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import com.hcp.common.core.exception.ServiceException;
 import com.hcp.common.core.web.domain.AjaxResult;
+import com.hcp.operator.domain.BatchPortReq;
+import com.hcp.operator.mapper.ChargingPileMapper;
+import com.hcp.system.api.domain.ChargingPile;
 import com.hcp.system.api.domain.ChargingPort;
 import com.hcp.system.api.domain.vo.PilePortVO;
 import com.hcp.system.api.domain.vo.PlotInfoReqVO;
@@ -26,6 +34,9 @@ public class ChargingPortServiceImpl implements IChargingPortService
 {
     @Autowired
     private ChargingPortMapper chargingPortMapper;
+
+    @Autowired
+    private ChargingPileMapper chargingPileMapper;
 
     /**
      * 充电桩端口 状态  N是未使用 Y 在使用 F是故障
@@ -105,6 +116,61 @@ public class ChargingPortServiceImpl implements IChargingPortService
     public int updateChargingPort(ChargingPort chargingPort)
     {
         return chargingPortMapper.updateById(chargingPort);
+    }
+
+    /**
+     * 批量新增充电桩端口（按枪数自动生成 A枪/B枪/C枪...）
+     *
+     * @param req 批量新增请求
+     * @return 结果
+     */
+    @Override
+    public int batchInsertPorts(BatchPortReq req)
+    {
+        if (req == null || StrUtil.isBlank(req.getPileId())) {
+            throw new ServiceException("充电桩编号不能为空");
+        }
+        Integer gunCount = req.getGunCount();
+        if (gunCount == null || gunCount <= 0) {
+            throw new ServiceException("枪口数量必须大于0");
+        }
+        if (gunCount > 64) {
+            throw new ServiceException("枪口数量过大，单次最多64枪");
+        }
+        ChargingPile pile = chargingPileMapper.getById(req.getPileId());
+        if (pile == null) {
+            throw new ServiceException("充电桩不存在");
+        }
+        // 该桩已存在端口则不允许重复批量新增
+        List<ChargingPort> existing = selectPortByPileId(req.getPileId());
+        if (CollUtil.isNotEmpty(existing)) {
+            throw new ServiceException("该桩已存在端口，不能重复批量新增");
+        }
+        Date now = new Date();
+        List<ChargingPort> list = new ArrayList<>();
+        for (int i = 1; i <= gunCount; i++) {
+            ChargingPort port = new ChargingPort();
+            port.setPileId(req.getPileId());
+            port.setDeviceId(String.valueOf(i));
+            port.setName(generateGunName(i));
+            port.setState(PORT_STATE_N);
+            port.setTenantId(pile.getTenantId());
+            port.setCreateTime(now);
+            list.add(port);
+        }
+        return chargingPortMapper.insertBatchPorts(list);
+    }
+
+    /**
+     * 生成枪口名称：1-26为A枪~Z枪，超出后使用 N号枪
+     */
+    private String generateGunName(int index)
+    {
+        if (index <= 26) {
+            char c = (char) ('A' + index - 1);
+            return c + "枪";
+        }
+        return index + "号枪";
     }
 
     /**

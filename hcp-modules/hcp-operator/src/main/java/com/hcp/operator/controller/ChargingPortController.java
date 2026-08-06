@@ -3,6 +3,7 @@ package com.hcp.operator.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hcp.operator.domain.BatchPortReq;
 import com.hcp.system.api.domain.ChargingPort;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
@@ -88,6 +89,18 @@ public class ChargingPortController extends BaseController
     public AjaxResult edit(@RequestBody ChargingPort chargingPort)
     {
         return toAjax(chargingPortService.updateChargingPort(chargingPort));
+    }
+
+    /**
+     * 批量新增充电桩端口（按枪数自动生成）
+     */
+    @RequiresPermissions("operator:port:add")
+    @Log(title = "充电桩端口", businessType = BusinessType.INSERT)
+    @PostMapping("/batch")
+    @Operation(summary = "批量新增充电桩端口")
+    public AjaxResult batchAdd(@RequestBody BatchPortReq req)
+    {
+        return toAjax(chargingPortService.batchInsertPorts(req));
     }
 
     /**

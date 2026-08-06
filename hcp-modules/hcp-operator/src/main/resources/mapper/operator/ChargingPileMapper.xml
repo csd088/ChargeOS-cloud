@@ -38,10 +38,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isHlht"    column="is_hlht"    />
         <result property="hlhtId"    column="hlht_id"    />
         <result property="tenantId"    column="tenant_id"    />
+        <result property="portCount"    column="port_count"    />
     </resultMap>
 
     <sql id="selectChargingPileVo">
-        select pile_id, name, cp_fee_type, sim_card, sim_due_time, equip_temperature, equip_cpu_temperature, lat, lng, address, img_url, running_status, offline_time, user_id, last_use_time, station_id, wx_rule_id, card_rule_id, create_time, device_type, pile_type, pile_status, electricity, voltage, max_power, fee_need_update, api_version, update_time, remark, deleted, is_hlht, hlht_id, tenant_id from c_charging_pile
+        select pile_id, name, cp_fee_type, sim_card, sim_due_time, equip_temperature, equip_cpu_temperature, lat, lng, address, img_url, running_status, offline_time, user_id, last_use_time, station_id, wx_rule_id, card_rule_id, create_time, device_type, pile_type, pile_status, electricity, voltage, max_power, fee_need_update, api_version, update_time, remark, deleted, is_hlht, hlht_id, tenant_id,
+        (select count(1) from c_charging_port p where p.pile_id = c_charging_pile.pile_id) as port_count
+        from c_charging_pile
     </sql>
 
     <select id="selectChargingPileList"   resultMap="ChargingPileResult">

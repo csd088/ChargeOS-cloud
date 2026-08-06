@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.hcp.operator.mapper.ChargingPileMapper;
+import com.hcp.operator.mapper.ChargingPortMapper;
 import com.hcp.system.api.domain.ChargingPile;
 import com.hcp.operator.service.IChargingPileService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,6 +51,8 @@ public class ChargingPileServiceImpl implements IChargingPileService
 {
     @Autowired
     private ChargingPileMapper chargingPileMapper;
+    @Autowired
+    private ChargingPortMapper chargingPortMapper;
     @Resource
     private IChargingPortService chargingPortService;
     @Resource
@@ -120,7 +123,7 @@ public class ChargingPileServiceImpl implements IChargingPileService
     }
 
     /**
-     * 批量删除充电桩
+     * 批量删除充电桩（级联删除其端口）
      *
      * @param pileIds 需要删除的充电桩主键
      * @return 结果
@@ -128,11 +131,12 @@ public class ChargingPileServiceImpl implements IChargingPileService
     @Override
     public int deleteChargingPileByPileIds(String[] pileIds)
     {
+        chargingPortMapper.deleteByPileIds(pileIds);
         return chargingPileMapper.deleteChargingPileByPileIds(pileIds);
     }
 
     /**
-     * 删除充电桩信息
+     * 删除充电桩信息（级联删除其端口）
      *
      * @param pileId 充电桩主键
      * @return 结果
@@ -140,6 +144,7 @@ public class ChargingPileServiceImpl implements IChargingPileService
     @Override
     public int deleteChargingPileByPileId(String pileId)
     {
+        chargingPortMapper.deleteByPileId(pileId);
         return chargingPileMapper.deleteById(pileId);
     }
 

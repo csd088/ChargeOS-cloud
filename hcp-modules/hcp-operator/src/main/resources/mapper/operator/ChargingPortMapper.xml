@@ -111,6 +111,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{portId}
         </foreach>
     </delete>
+    <delete id="deleteByPileIds" parameterType="String">
+        delete from c_charging_port where pile_id in
+        <foreach item="pileId" collection="pileIds" open="(" separator="," close=")">
+            #{pileId}
+        </foreach>
+    </delete>
+    <delete id="deleteByPileId" parameterType="String">
+        delete from c_charging_port where pile_id = #{pileId}
+    </delete>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ChargingPortResult">
         <include refid="selectChargingPortVo" />
         where  port_id = #{portId,jdbcType=BIGINT}
@@ -187,6 +196,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
             <if test="updateBy != null">#{updateBy,jdbcType=VARCHAR},</if>
         </trim>
+    </insert>
+    <insert id="insertBatchPorts" parameterType="java.util.List">
+        insert into c_charging_port
+        ( state, name, pile_id, device_id, create_time, tenant_id )
+        values
+        <foreach collection="list" item="port" separator=",">
+            (#{port.state,jdbcType=VARCHAR}, #{port.name,jdbcType=VARCHAR}, #{port.pileId,jdbcType=VARCHAR}
+            , #{port.deviceId,jdbcType=VARCHAR}, #{port.createTime,jdbcType=TIMESTAMP}, #{port.tenantId,jdbcType=BIGINT})
+        </foreach>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.hcp.system.api.domain.ChargingPort">
         update c_charging_port

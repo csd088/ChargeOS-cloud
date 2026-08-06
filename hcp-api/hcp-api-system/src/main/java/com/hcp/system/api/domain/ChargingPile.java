@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.hcp.common.core.annotation.Excel;
@@ -125,6 +126,8 @@ public class ChargingPile extends TenantEntity
     /** 互联互通编号 */
     private String hlhtId;
 
-
+    /** 端口数量（非表字段，列表查询时统计） */
+    @TableField(exist = false)
+    private Integer portCount;
 
 }

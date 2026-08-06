@@ -3,6 +3,7 @@ package com.hcp.operator.service;
 import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.hcp.common.core.web.domain.AjaxResult;
+import com.hcp.operator.domain.BatchPortReq;
 import com.hcp.system.api.domain.ChargingPort;
 import com.hcp.system.api.domain.vo.PilePortVO;
 import com.hcp.system.api.domain.vo.PlotInfoReqVO;
@@ -53,6 +54,14 @@ public interface IChargingPortService
      * @return 结果
      */
     int updateChargingPort(ChargingPort chargingPort);
+
+    /**
+     * 批量新增充电桩端口（按枪数自动生成）
+     *
+     * @param req 批量新增请求
+     * @return 结果
+     */
+    int batchInsertPorts(BatchPortReq req);
 
     /**
      * 批量删除充电桩端口
