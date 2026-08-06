@@ -1,6 +1,7 @@
 package com.hcp.operator.service;
 
 import java.util.List;
+import com.hcp.operator.domain.BatchConnectorReq;
 import com.hcp.operator.domain.HlhtConnectorInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
@@ -50,6 +51,14 @@ public interface IHlhtConnectorInfoService
      * @return 结果
      */
     int updateHlhtConnectorInfo(HlhtConnectorInfo hlhtConnectorInfo);
+
+    /**
+     * 批量新增充电接口（按枪数自动生成）
+     *
+     * @param req 批量新增请求
+     * @return 结果
+     */
+    int batchInsertConnectors(BatchConnectorReq req);
 
     /**
      * 批量删除接口信息

@@ -45,4 +45,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{connectorId}
         </foreach>
     </delete>
+    <delete id="deleteByEquipmentIds" parameterType="String">
+        delete from hlht_connector_info where equipment_id in
+        <foreach item="equipmentId" collection="equipmentIds" open="(" separator="," close=")">
+            #{equipmentId}
+        </foreach>
+    </delete>
+    <delete id="deleteByEquipmentId" parameterType="String">
+        delete from hlht_connector_info where equipment_id = #{equipmentId}
+    </delete>
+    <insert id="insertBatchConnectors" parameterType="java.util.List">
+        insert into hlht_connector_info
+        ( connector_id, connector_name, equipment_id, tenant_id )
+        values
+        <foreach collection="list" item="connector" separator=",">
+            (#{connector.connectorId,jdbcType=VARCHAR}, #{connector.connectorName,jdbcType=VARCHAR}
+            , #{connector.equipmentId,jdbcType=VARCHAR}, #{connector.tenantId,jdbcType=BIGINT})
+        </foreach>
+    </insert>
 </mapper>

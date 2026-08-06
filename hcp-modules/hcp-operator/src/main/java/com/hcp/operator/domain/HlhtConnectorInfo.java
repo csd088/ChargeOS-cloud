@@ -1,6 +1,8 @@
 package com.hcp.operator.domain;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.hcp.common.core.annotation.Excel;
@@ -97,6 +99,24 @@ public class HlhtConnectorInfo extends TenantEntity
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String equipmentId;
 
+    /** 创建时间（表中无此列，覆盖父类） */
+    @TableField(exist = false)
+    private Date createTime;
 
+    /** 更新时间（表中无此列，覆盖父类） */
+    @TableField(exist = false)
+    private Date updateTime;
+
+    /** 创建人（表中无此列，覆盖父类） */
+    @TableField(exist = false)
+    private String createBy;
+
+    /** 更新人（表中无此列，覆盖父类） */
+    @TableField(exist = false)
+    private String updateBy;
+
+    /** 备注（表中无此列，覆盖父类） */
+    @TableField(exist = false)
+    private String remark;
 
 }

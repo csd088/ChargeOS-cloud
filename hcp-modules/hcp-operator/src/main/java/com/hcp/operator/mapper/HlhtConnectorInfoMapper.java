@@ -37,4 +37,28 @@ public interface HlhtConnectorInfoMapper extends BaseMapperX<HlhtConnectorInfo>
      * @return 结果
      */
     int deleteHlhtConnectorInfoByConnectorIds(String[] connectorIds);
+
+    /**
+     * 批量新增充电接口
+     *
+     * @param list 接口集合
+     * @return 结果
+     */
+    int insertBatchConnectors(@Param("list") List<HlhtConnectorInfo> list);
+
+    /**
+     * 按设备编号批量删除接口（删设备级联用）
+     *
+     * @param equipmentIds 设备编号集合
+     * @return 结果
+     */
+    int deleteByEquipmentIds(@Param("equipmentIds") String[] equipmentIds);
+
+    /**
+     * 按设备编号删除接口（删设备级联用）
+     *
+     * @param equipmentId 设备编号
+     * @return 结果
+     */
+    int deleteByEquipmentId(@Param("equipmentId") String equipmentId);
 }

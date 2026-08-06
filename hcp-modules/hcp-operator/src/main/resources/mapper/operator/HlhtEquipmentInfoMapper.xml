@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <delete id="deleteHlhtEquipmentInfoByEquipmentIDs" parameterType="String">
-        delete from hlht_equipment_info where equipmentID in
+        delete from hlht_equipment_info where equipment_id in
         <foreach item="equipmentID" collection="array" open="(" separator="," close=")">
             #{equipmentID}
         </foreach>

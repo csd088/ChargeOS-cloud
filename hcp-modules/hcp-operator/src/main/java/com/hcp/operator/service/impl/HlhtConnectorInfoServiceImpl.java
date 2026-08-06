@@ -1,9 +1,16 @@
 package com.hcp.operator.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import cn.hutool.core.util.StrUtil;
+import com.hcp.common.core.exception.ServiceException;
+import com.hcp.operator.mapper.HlhtEquipmentInfoMapper;
+import com.hcp.operator.domain.HlhtEquipmentInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.hcp.operator.mapper.HlhtConnectorInfoMapper;
+import com.hcp.operator.domain.BatchConnectorReq;
 import com.hcp.operator.domain.HlhtConnectorInfo;
 import com.hcp.operator.service.IHlhtConnectorInfoService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,6 +29,9 @@ public class HlhtConnectorInfoServiceImpl implements IHlhtConnectorInfoService
 {
     @Autowired
     private HlhtConnectorInfoMapper hlhtConnectorInfoMapper;
+
+    @Autowired
+    private HlhtEquipmentInfoMapper hlhtEquipmentInfoMapper;
 
     /**
      * 查询接口信息
@@ -83,6 +93,47 @@ public class HlhtConnectorInfoServiceImpl implements IHlhtConnectorInfoService
     public int updateHlhtConnectorInfo(HlhtConnectorInfo hlhtConnectorInfo)
     {
         return hlhtConnectorInfoMapper.updateById(hlhtConnectorInfo);
+    }
+
+    /**
+     * 批量新增充电接口（按枪数自动生成 connectorId=equipmentId+序号）
+     *
+     * @param req 批量新增请求
+     * @return 结果
+     */
+    @Override
+    public int batchInsertConnectors(BatchConnectorReq req)
+    {
+        if (req == null || StrUtil.isBlank(req.getEquipmentId())) {
+            throw new ServiceException("设备编号不能为空");
+        }
+        Integer gunCount = req.getGunCount();
+        if (gunCount == null || gunCount <= 0) {
+            throw new ServiceException("枪口数量必须大于0");
+        }
+        if (gunCount > 64) {
+            throw new ServiceException("枪口数量过大，单次最多64枪");
+        }
+        HlhtEquipmentInfo equipment = hlhtEquipmentInfoMapper.selectById(req.getEquipmentId());
+        if (equipment == null) {
+            throw new ServiceException("充电设备不存在");
+        }
+        // 该设备已存在接口则不允许重复批量新增
+        Long existingCount = hlhtConnectorInfoMapper.selectCount(new LambdaQueryWrapper<HlhtConnectorInfo>()
+                .eq(HlhtConnectorInfo::getEquipmentId, req.getEquipmentId()));
+        if (existingCount != null && existingCount > 0) {
+            throw new ServiceException("该设备已存在接口，不能重复批量新增");
+        }
+        List<HlhtConnectorInfo> list = new ArrayList<>();
+        for (int i = 1; i <= gunCount; i++) {
+            HlhtConnectorInfo connector = new HlhtConnectorInfo();
+            connector.setConnectorId(req.getEquipmentId() + "_" + i);
+            connector.setConnectorName(i + "号充电接口");
+            connector.setEquipmentId(req.getEquipmentId());
+            connector.setTenantId(equipment.getTenantId());
+            list.add(connector);
+        }
+        return hlhtConnectorInfoMapper.insertBatchConnectors(list);
     }
 
     /**

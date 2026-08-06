@@ -3,6 +3,7 @@ package com.hcp.operator.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.hcp.operator.mapper.HlhtConnectorInfoMapper;
 import com.hcp.operator.mapper.HlhtEquipmentInfoMapper;
 import com.hcp.operator.domain.HlhtEquipmentInfo;
 import com.hcp.operator.service.IHlhtEquipmentInfoService;
@@ -22,6 +23,9 @@ public class HlhtEquipmentInfoServiceImpl implements IHlhtEquipmentInfoService
 {
     @Autowired
     private HlhtEquipmentInfoMapper hlhtEquipmentInfoMapper;
+
+    @Autowired
+    private HlhtConnectorInfoMapper hlhtConnectorInfoMapper;
 
     /**
      * 查询设备列表
@@ -86,7 +90,7 @@ public class HlhtEquipmentInfoServiceImpl implements IHlhtEquipmentInfoService
     }
 
     /**
-     * 批量删除设备列表
+     * 批量删除设备列表（级联删除其充电接口）
      *
      * @param equipmentIDs 需要删除的设备列表主键
      * @return 结果
@@ -94,11 +98,12 @@ public class HlhtEquipmentInfoServiceImpl implements IHlhtEquipmentInfoService
     @Override
     public int deleteHlhtEquipmentInfoByEquipmentIDs(String[] equipmentIDs)
     {
+        hlhtConnectorInfoMapper.deleteByEquipmentIds(equipmentIDs);
         return hlhtEquipmentInfoMapper.deleteHlhtEquipmentInfoByEquipmentIDs(equipmentIDs);
     }
 
     /**
-     * 删除设备列表信息
+     * 删除设备列表信息（级联删除其充电接口）
      *
      * @param equipmentID 设备列表主键
      * @return 结果
@@ -106,6 +111,7 @@ public class HlhtEquipmentInfoServiceImpl implements IHlhtEquipmentInfoService
     @Override
     public int deleteHlhtEquipmentInfoByEquipmentID(String equipmentID)
     {
+        hlhtConnectorInfoMapper.deleteByEquipmentId(equipmentID);
         return hlhtEquipmentInfoMapper.deleteById(equipmentID);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hcp.common.log.annotation.Log;
 import com.hcp.common.log.enums.BusinessType;
 import com.hcp.common.security.annotation.RequiresPermissions;
+import com.hcp.operator.domain.BatchConnectorReq;
 import com.hcp.operator.domain.HlhtConnectorInfo;
 import com.hcp.operator.service.IHlhtConnectorInfoService;
 import com.hcp.common.core.web.controller.BaseController;
@@ -88,6 +89,17 @@ public class HlhtConnectorInfoController extends BaseController
     public AjaxResult edit(@RequestBody HlhtConnectorInfo hlhtConnectorInfo)
     {
         return toAjax(hlhtConnectorInfoService.updateHlhtConnectorInfo(hlhtConnectorInfo));
+    }
+
+    /**
+     * 批量新增充电接口（按枪数自动生成）
+     */
+    @RequiresPermissions("operator:connectorInfo:add")
+    @Log(title = "接口信息", businessType = BusinessType.INSERT)
+    @PostMapping("/batch")
+    public AjaxResult batchAdd(@RequestBody BatchConnectorReq req)
+    {
+        return toAjax(hlhtConnectorInfoService.batchInsertConnectors(req));
     }
 
     /**
