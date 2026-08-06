@@ -6,6 +6,7 @@ import java.util.List;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.hcp.common.core.exception.ServiceException;
 import com.hcp.common.core.web.domain.AjaxResult;
 import com.hcp.operator.domain.BatchPortReq;
@@ -103,6 +104,8 @@ public class ChargingPortServiceImpl implements IChargingPortService
     @Override
     public int insertChargingPort(ChargingPort chargingPort)
     {
+        // 同桩内枪口编号唯一校验
+        validatePortDeviceIdUnique(chargingPort.getPileId(), chargingPort.getDeviceId(), null);
         return chargingPortMapper.insert(chargingPort);
     }
 
@@ -115,7 +118,29 @@ public class ChargingPortServiceImpl implements IChargingPortService
     @Override
     public int updateChargingPort(ChargingPort chargingPort)
     {
+        validatePortDeviceIdUnique(chargingPort.getPileId(), chargingPort.getDeviceId(), chargingPort.getPortId());
         return chargingPortMapper.updateById(chargingPort);
+    }
+
+    /**
+     * 校验同桩内枪口编号(device_id)唯一
+     *
+     * @param pileId   桩编号
+     * @param deviceId 枪口编号
+     * @param excludePortId 需排除的端口(修改时排除自身)
+     */
+    private void validatePortDeviceIdUnique(String pileId, String deviceId, Long excludePortId)
+    {
+        if (StrUtil.isBlank(pileId) || StrUtil.isBlank(deviceId)) {
+            return;
+        }
+        Long count = chargingPortMapper.selectCount(new LambdaQueryWrapper<ChargingPort>()
+                .eq(ChargingPort::getPileId, pileId)
+                .eq(ChargingPort::getDeviceId, deviceId)
+                .ne(excludePortId != null, ChargingPort::getPortId, excludePortId));
+        if (count != null && count > 0) {
+            throw new ServiceException("该桩下枪口编号 " + deviceId + " 已存在，不能重复");
+        }
     }
 
     /**
