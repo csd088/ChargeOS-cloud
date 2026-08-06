@@ -1,37 +1,86 @@
 server:
-  port: 1026
+  port: 38080
 
 spring:
   cloud:
     gateway:
+      discovery:
+        locator:
+          lowerCaseServiceId: true
+          enabled: true
       routes:
+        # 认证中心
         - id: hcp-auth
           uri: lb://hcp-auth
           predicates:
             - Path=/auth/**
           filters:
+            - CacheRequestFilter
+            - ValidateCodeFilter
             - StripPrefix=1
-        - id: hcp-system
-          uri: lb://hcp-system
-          predicates:
-            - Path=/system/**
-          filters:
-            - StripPrefix=1
-        - id: hcp-operator
-          uri: lb://hcp-operator
-          predicates:
-            - Path=/operator/**
-          filters:
-            - StripPrefix=1
+        # 代码生成
         - id: hcp-gen
           uri: lb://hcp-gen
           predicates:
             - Path=/code/**
           filters:
             - StripPrefix=1
-      discovery:
-        locator:
-          enabled: true
+        # 系统模块
+        - id: hcp-system
+          uri: lb://hcp-system
+          predicates:
+            - Path=/system/**
+          filters:
+            - StripPrefix=1
+        # 文件服务
+        - id: hcp-file
+          uri: lb://hcp-file
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix=1
+        # 监控模块
+        - id: hcp-monitor
+          uri: lb://hcp-monitor
+          predicates:
+            - Path=/monitor/**
+          filters:
+            - StripPrefix=1
+        # 定时模块
+        - id: hcp-job
+          uri: lb://hcp-job
+          predicates:
+            - Path=/job/**
+          filters:
+            - StripPrefix=1
+        # 样例模块
+        - id: hcp-demo
+          uri: lb://hcp-demo
+          predicates:
+            - Path=/demo/**
+          filters:
+            - StripPrefix=1
+        # 运营模块
+        - id: hcp-operator
+          uri: lb://hcp-operator
+          predicates:
+            - Path=/operator/**
+          filters:
+            - StripPrefix=1
+        # 小程序模块
+        - id: hcp-mp
+          uri: lb://hcp-mp
+          predicates:
+            - Path=/mp/**
+          filters:
+            - StripPrefix=1
+        # 模拟桩模块
+        - id: hcp-simulator
+          uri: lb://hcp-simulator
+          predicates:
+            - Path=/simulator/**
+          filters:
+            - StripPrefix=1
     sentinel:
       enabled: false
     loadbalancer:
@@ -39,7 +88,26 @@ spring:
         enabled: true
 
 security:
+  # 验证码
+  captcha:
+    enabled: true
+    type: math
+  # 防止XSS攻击
+  xss:
+    enabled: true
+    excludeUrls:
+      - /system/notice
+  # 不校验白名单
   ignore:
     whites:
+      - /auth/logout
       - /auth/login
       - /auth/register
+      - /*/v2/api-docs
+      - /csrf
+      - /job/api/callback
+      - /job/api/registry
+      - /job/api/registryRemove
+      - /file/documents/**
+      - /hcp-mp/**
+      - /hcp-operator/websocket/charge/**
